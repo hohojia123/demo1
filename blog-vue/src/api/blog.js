@@ -37,7 +37,7 @@ export default {
     return request({
       url: '/blog',
       method: 'post',
-      data: qs.stringify({'blogTitle': blogTitle, 'blogBody': blogBody, 'tagId': tagId})
+      data: qs.stringify({'blogTitle': blogTitle, 'blogBody': blogBody, 'tagIds': tagId})
     })
   },
   uploadImg(formdata) {
@@ -52,7 +52,7 @@ export default {
     return request({
       url: '/blog/' + blogId,
       method: 'put',
-      data: qs.stringify({'blogTitle': blogTitle, 'blogBody': blogBody, 'tagId': tagId})
+      data: qs.stringify({'blogTitle': blogTitle, 'blogBody': blogBody, 'tagIds': tagId})
     })
   },
   adminDeleteBlog(blogId) { //管理员删除博客

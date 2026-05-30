@@ -97,6 +97,7 @@ public class BlogServiceImpl implements BlogService {
      for(Integer tagId:tagIds)
          bolgmapper.saveBlogTag(blog.getId(),tagId);
      redisTemplate.delete(RedisConfig.REDIS_STATISTICAL);
+	    redisTemplate.delete(RedisConfig.REDIS_NEW_BLOG);
         blog.setTags(tagMapper.findTagByUserId(user.getId()));
      redisTemplate.execute(HOT_BLOG_LUA,Arrays.asList(RedisConfig.REDIS_HOT_BLOG),RedisConfig.REDIS_HOT_BLOG_COUNT+"",blog.getId().toString());
      blog.getUser().setPassword(null);

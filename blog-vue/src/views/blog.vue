@@ -153,6 +153,7 @@
         replyBody: '',   //回复内容
         like: 0,   //未点赞：0，点赞：1
         likeCount: 0,  //点赞次数
+        userReward: null  //打赏码
       }
     },
     watch: {

@@ -85,6 +85,9 @@
               }
             }
           });
+        }).catch(err => {
+          const msg = err.response ? `发布失败(${err.response.status})` : '网络错误，后端是否启动？';
+          this.$message.error(msg);
         })
       },
       $uploadImg(pos, $file) { //图片上传
@@ -107,6 +110,11 @@
       }
     },
     created() {
+      if (this.$store.state.token === '') {
+        this.$message.warning('请先登录');
+        this.$router.push('/');
+        return;
+      }
       tag.getTag().then(res => {
         this.tags = res.data;
       })

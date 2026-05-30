@@ -3,7 +3,7 @@
 --ARGV[2]=blog_id
 local len=redis.call('LLEN',KEYS[1])
 if tonumber(len)>=tonumber(ARGV[1]) then
-    redis.call('RPOP',KEY[1])
+    redis.call('RPOP',KEYS[1])
 end
-redis.call('LPUSH',KEY[1],ARGV[2])
+redis.call('LPUSH',KEYS[1],ARGV[2])
 return 1
