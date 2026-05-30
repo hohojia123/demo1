@@ -34,9 +34,9 @@
       <!-- 以下是预览模式配置 -->
       <!--:toolbarsFlag="false"  :subfield="false" defaultOpen="preview"-->
 
-      <div style="margin: 0 auto;width: 30%" class="hidden-xs-only" v-if="userReward!=undefined&&userReward!==null">
+      <div style="margin: 0 auto;width: 30%" class="hidden-xs-only">
         <br/>
-        <el-popover placement="bottom" width="250px" height="250px" trigger="hover">
+        <el-popover placement="bottom" width="250px" height="250px" trigger="hover" v-if="userReward!=undefined&&userReward!==null">
           <img alt="打赏码" :src="userReward" width="250px" height="250px"/>
           <el-button type="text" slot="reference" icon="el-icon-trophy" round>写的不错，打赏一个</el-button>
         </el-popover>

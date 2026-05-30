@@ -61,7 +61,9 @@
                           prefixIcon="el-icon-bell"/>
               </el-form-item>
 
-
+              <el-form-item :label-width="formLabelWidth">
+                <el-input v-model="form.registerMail" placeholder="邮箱" prefixIcon="el-icon-message"/>
+              </el-form-item>
 
               <el-form-item :label-width="formLabelWidth">
                <el-input v-model="form.registerMailCode" placeholder="邮箱验证码" prefixIcon="el-icon-key"/>
