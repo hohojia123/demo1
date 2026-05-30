@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.RoleMapper">
+    <resultMap id="Role" type="com.example.demo.model.pojo.Role">
+        <!-- column: 数据库列名, property: Java 实体类属性名 -->
+        <id column="role_id" property="id" />
+        <result column="role_name" property="name" />
+    </resultMap>
+    <select id="findRoleByName" resultMap="Role">
+        SELECT role_id, role_name
+        FROM role
+        WHERE role_name = #{rolename}
+    </select>
+
+    <insert id="saveRole">
+        INSERT INTO user_role (user_id, role_id) VALUES (#{userId}, #{roleId})
+    </insert>
+
+    <select id="selectRoleById" resultMap="Role">
+        SELECT r.role_id , r.role_name
+        FROM user_role ur
+        LEFT JOIN role r ON ur.role_id = r.role_id
+        WHERE ur.user_id = #{i}
+    </select>
+
+</mapper>

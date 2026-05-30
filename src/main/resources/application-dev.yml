@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: demo
+  jackson:
+    date-format:  yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  datasource:
+    url: jdbc:mysql://localhost:3306/demo1?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: YOUR_PASSWORD
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      password: YOUR_PASSWORD
+      host: 127.0.0.1
+      database: 0
+      port: 6379
+  mail:
+    host: smtp.qq.com       # SMTP 服务器地址 (163邮箱是 smtp.163.com)
+    username: 1661918162@qq.com # 发件人邮箱
+    password: YOUR_QQ_AUTH_CODE # ⚠️ 这里是邮箱的“授权码”，不是登录密码！
+    port: 465
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true    # 开启 SSL 加密
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.demo.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+sky:
+  jwt:
+    secret-key: "YOUR_JWT_SECRET_KEY"
+    ttl-mail: 86400000000
+    prefix: "Bearer"
+    header: "Authorization"
+

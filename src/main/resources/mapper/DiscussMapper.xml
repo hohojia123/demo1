@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.DiscussMapper">
+
+    <resultMap id="Discuss" type="com.example.demo.model.pojo.Discuss">
+        <id property="id" column="discuss_id"/>
+        <result property="body" column="discuss_body"/>
+        <result property="time" column="discuss_time"/>
+
+        <association property="user" javaType="com.example.demo.model.pojo.User">
+            <id property="id" column="user_id"/>
+            <result property="name" column="user_name"/>
+            <result property="avatar" column="user_avatar"/>
+        </association>
+        <association property="blog" javaType="com.example.demo.model.pojo.Blog">
+            <id property="id" column="blog_id"/>
+            <result property="title" column="blog_title"/>
+        </association>
+    </resultMap>
+
+
+    <select id="findNewDiscuss" parameterType="Integer" resultMap="Discuss">
+        SELECT discuss_id,discuss_body,discuss_time,b.blog_id ,b.blog_title,u.user_id,u.user_name,u.user_avatar
+        FROM discuss d LEFT JOIN blog b on d.blog_id = b.blog_id LEFT JOIN user u on d.user_id = u.user_id
+        WHERE b.blog_state = 1
+        ORDER BY d.discuss_time DESC
+        LIMIT 0, #{value}
+    </select>
+    <select id="findDiscussByBlogId" resultMap="Discuss">
+        SELECT d.discuss_id, d.discuss_body, d.discuss_time ,
+        b.blog_id , u.user_id , u.user_name , u.user_avatar
+        FROM discuss d LEFT JOIN blog b on d.blog_id = b.blog_id LEFT JOIN user u on d.user_id = u.user_id
+        WHERE d.blog_id = #{blogId}
+        ORDER BY d.discuss_time DESC
+    </select>
+
+    <select id="findUserNewDiscuss" resultMap="Discuss">
+        SELECT discuss_id,discuss_body,discuss_time,b.blog_id ,b.blog_title,u.user_id,u.user_name,u.user_avatar
+        FROM discuss d LEFT JOIN blog b on d.blog_id = b.blog_id LEFT JOIN user u on d.user_id = u.user_id
+        WHERE b.user_id = #{id} AND b.blog_state = 1
+        ORDER BY d.discuss_time
+        LIMIT 0 , #{count}
+    </select>
+    <select id="selectById" resultMap="Discuss">
+        SELECT discuss_id,discuss_body,discuss_time,b.blog_id ,u.user_id,u.user_name,u.user_avatar
+        FROM discuss d LEFT JOIN blog b on d.blog_id = b.blog_id LEFT JOIN user u on d.user_id = u.user_id
+        WHERE d.discuss_id = #{discussId}
+    </select>
+
+
+</mapper>

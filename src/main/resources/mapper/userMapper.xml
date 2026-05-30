@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.userMapper" >
+    <resultMap id="UserResultMap" type="com.example.demo.model.pojo.User">
+        <id property="id" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="password" column="user_password"/>
+        <result property="mail" column="user_mail"/>
+        <result property="state" column="user_state"/>
+        <result property="avatar" column="user_avatar"/>
+    </resultMap>
+
+    <!-- 登录查询 -->
+    <select id="login" resultMap="UserResultMap">
+        SELECT * FROM user WHERE user_name = #{name}
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="selectById" resultMap="UserResultMap">
+        SELECT * FROM user WHERE user_id = #{id}
+    </select>
+
+    <!-- 更新用户（动态更新非空字段） -->
+    <update id="updateUser" parameterType="com.example.demo.model.pojo.User">
+        UPDATE user
+        <set>
+            <if test="name != null">
+                user_name = #{name},
+            </if>
+            <if test="password != null">
+                user_password = #{password},
+            </if>
+            <if test="mail != null">
+                user_mail = #{mail},
+            </if>
+            <if test="state != null">
+                user_state = #{state},
+            </if>
+            <if test="avatar != null">
+                user_avatar = #{avatar},
+            </if>
+        </set>
+        WHERE user_id = #{id}
+    </update>
+
+    <!-- 根据名称查询 -->
+    <select id="selectByName" resultMap="UserResultMap">
+        SELECT * FROM user WHERE user_name = #{name}
+    </select>
+
+    <!-- 根据邮箱查询 -->
+    <select id="selectByMail" resultMap="UserResultMap">
+        SELECT * FROM user WHERE user_mail = #{mail}
+    </select>
+    <select id="findUserByMail" resultMap="UserResultMap">
+        SELECT * FROM user WHERE user_mail = #{mail}
+    </select>
+    <select id="findUserPage" resultMap="UserResultMap">
+        select * from user
+        order by user_id desc
+    </select>
+    <select id="searchUserByName" resultMap="UserResultMap">
+        select * from user where user_name like concat('%',#{userName},'%')
+    </select>
+    <select id="getAvatar" resultType="java.lang.String">
+        select user_avatar from user where user_id = #{userid}
+    </select>
+
+    <!-- 保存用户 -->
+    <insert id="saveUser" useGeneratedKeys="true" keyProperty="id" keyColumn="user_id">
+        INSERT INTO user(user_name, user_password, user_mail, user_state, user_avatar)
+        VALUES (#{name}, #{password}, #{mail}, #{state}, #{avatar})
+    </insert>
+
+</mapper>

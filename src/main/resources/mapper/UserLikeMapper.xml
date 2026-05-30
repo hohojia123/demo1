@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.UserLikeMapper">
+    <resultMap id="Blog" type="com.example.demo.model.pojo.UserLike">
+        <id column="id" property="id" />
+        <result column="status" property="status" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+
+        <!-- 映射嵌套的 Blog 对象 -->
+        <association property="blog" javaType="com.example.demo.model.pojo.Blog">
+            <id column="blog_id" property="id" />
+        </association>
+
+        <!-- 映射嵌套的 User 对象 -->
+        <association property="user" javaType="com.example.demo.model.pojo.User">
+            <id column="user_id" property="id" />
+        </association>
+    </resultMap>
+
+
+    <!-- 查询点赞状态 -->
+    <select id="getUserLike" resultMap="Blog">
+        SELECT * FROM user_like
+        WHERE blog_id = #{id} AND user_id = #{id1}
+    </select>
+
+    <!-- 保存或更新点赞状态 -->
+    <!-- 使用 ON DUPLICATE KEY UPDATE 实现存在则更新，不存在则插入 -->
+    <insert id="saveUserLike">
+        INSERT INTO user_like (blog_id, user_id, status)
+        VALUES (#{blog.id}, #{user.id}, #{status})
+        ON DUPLICATE KEY UPDATE status = #{status}
+    </insert>
+
+</mapper>

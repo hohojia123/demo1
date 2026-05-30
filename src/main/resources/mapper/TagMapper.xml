@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.TagMapper">
+
+    <resultMap id="Tag" type="com.example.demo.model.pojo.Tag">
+        <id property="id" column="tag_id"/>
+        <result property="name" column="tag_name"/>
+         <association property="user" javaType="com.example.demo.model.pojo.User">
+             <id property="id" column="user_id"/>
+         </association>
+    </resultMap>
+
+    <update id="saveTag" parameterType="com.example.demo.model.pojo.Tag">
+        INSERT INTO tag
+        VALUES(null,#{name},#{user.id})
+    </update>
+    <update id="updateTag">
+        UPDATE tag
+        SET tag_name = #{name}
+        WHERE tag_id = #{id}
+    </update>
+    <delete id="deleteTagByBlogId" parameterType="Integer">
+       delete from blog_tag where blog_id = #{blogId}
+    </delete>
+
+    <select id="selectByTagName" parameterType="String" resultMap="Tag">
+        select tag_id ,tag_name, user_id from tag where LOWER(tag_name) = LOWER(#{tagName})
+    </select>
+
+    <select id="selectById"  parameterType="Integer" resultMap="Tag">
+        select tag_id ,tag_name, user_id from tag where tag_id = #{tagId}
+    </select>
+    <select id="findTagByUserId" parameterType="Integer" resultMap="Tag">
+        SELECT tag_id,tag_name,user_id
+        FROM tag
+        WHERE user_id = #{value}
+    </select>
+
+
+</mapper>
