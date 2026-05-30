@@ -91,6 +91,10 @@
               <i class="el-icon-s-home"></i>
               我的博客
             </el-menu-item>
+            <el-menu-item route="/chat" index="4-5">&nbsp;&nbsp;&nbsp;
+              <i class="el-icon-chat-line-square"></i>
+              聊天室
+            </el-menu-item>
             <el-menu-item route="/account" index="4-2">&nbsp;&nbsp;&nbsp;
               <i class="el-icon-s-tools"></i>
               账号设置
