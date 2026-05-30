@@ -10,7 +10,6 @@ import searchBlog from '@/views/searchBlog'
 import blog from '@/views/blog'
 import myBlog from '@/views/myBlog'
 import editBlog from '@/views/editBlog'
-import chat from '@/views/chat'
 import notfound from '@/views/notfound'
 
 import userManage from '@/views/userManage'
@@ -76,11 +75,6 @@ export default new Router({
       path: '/editBlog/:blogId',
       name: 'editBlog',
       component: editBlog
-    },
-    {
-      path: '/chat',
-      name: 'chat',
-      component: chat
     },
     {
       path: '*',
