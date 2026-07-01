@@ -28,6 +28,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,7 +60,7 @@ public class BlogServiceImpl implements BlogService {
  @Autowired
  private BolgTask blogTask;
  @Autowired
- private RabbitTemplate rabbitTemplate;
+ private KafkaTemplate<String,Blog>kafkaTemplate;
  @Autowired
  private CacheUtil cacheUtil;
 
@@ -116,14 +117,14 @@ public class BlogServiceImpl implements BlogService {
                   b.setTags(tagMapper.findTagByUserId(b.getUser().getId()));
                   return b;
               });
+     if(blog==null)
+         throw new RuntimeException("博客不存在");
        if(isHistory){
            blog.setBlogViews(blog.getBlogViews() + 1);
                redisTemplate.opsForValue().set(RedisConfig.REDIS_BLOG_PREFIX + blogId, objectMapper.writeValueAsString(blog));
-               // rabbitTemplate.convertAndSend(RabbtiConfig.BLOG_QUEUE, blog);
-               bolgmapper.updateBlog(blog);
+         kafkaTemplate.send("blog-topic","blogview-"+blogId, blog);
        }
-       if(blog==null)
-           throw new RuntimeException("博客不存在");
+
        return blog;
     }
 

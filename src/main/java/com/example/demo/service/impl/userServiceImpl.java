@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 
+import cn.hutool.json.JSONUtil;
 import com.example.demo.common.BaseContext;
 import com.example.demo.configuration.JwtConfi;
 import com.example.demo.configuration.MailConfi;
@@ -15,10 +16,16 @@ import com.example.demo.uitl.JwtUtil;
 import com.example.demo.uitl.RandomUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,6 +56,8 @@ public class userServiceImpl implements userService {
     private BCryptPasswordEncoder encoder;
     @Autowired
     private RoleMapper roleMapper;
+    @Autowired
+    private KafkaTemplate<String, String>kafkaTemplate;
     @Override
     public Map<String, Object> login(User user) {
        User user1= userMapper.login(user);
@@ -118,18 +127,25 @@ public class userServiceImpl implements userService {
     public String getmailCodeFromRedis(String mail) {
         return redisTemplate.opsForValue().get(MailConfi.REDIS_MAIL_KEY_PREFIX+mail);
     }
-    @Async
-    public void sendMailAsync(String mail, String code) {
+    @RetryableTopic(attempts = "3", backoff = @Backoff(delay = 1000))
+    @KafkaListener(topics = "email-send-topic",groupId = "email-send-group")
+    public void sendMailAsync(ConsumerRecord<String, String>record, Acknowledgment ack) {
+        Map<String, Object> m = JSONUtil.toBean(record.value(), Map.class);
+        String mail = (String) m.get("email");
+        String code = (String) m.get("code");
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(mailConfi.getUsername());
             message.setTo(mail);
             message.setSubject("博客系统验证码");
             message.setText("您的验证码是：" + code + "，有效期"+MailConfi.EXPIRED_TIME+"分钟");
-            mailSender.send(message);  // 后台发送，不影响用户响应
+            mailSender.send(message);
+            ack.acknowledge();
+            // 后台发送，不影响用户响应
         } catch (Exception e) {
             // 记录日志，但不影响用户
             System.err.println("邮件发送失败：" + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
     @Override
@@ -138,8 +154,11 @@ public class userServiceImpl implements userService {
         String code = random.toString();
         // 1. 先存入 Redis
         updateMailSendState(mail, code);
-        // 2. 异步发送邮件（立即返回）
-        sendMailAsync(mail, code);
+        Map<String,String>message=new HashMap<>();
+        message.put("mail",mail);
+        message.put("code",code);
+        kafkaTemplate.send("email-send-topic",null, JSONUtil.toJsonStr( message));
+
     }
     public void updateMailSendState(String mail, String code) {
         String key = MailConfi.REDIS_MAIL_KEY_PREFIX + mail;

@@ -31,7 +31,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         "/blog/searchBlog/**",
                         "/blog/getBlogLikeCount/**",
                         "/discuss/newDiscuss",
-                        "/discuss/{blogId}/{page}/{showCount}"
+                        "/discuss/{blogId}/{page}/{showCount}",
+                        "/blog/test"
+
                 );
     }
     @Bean

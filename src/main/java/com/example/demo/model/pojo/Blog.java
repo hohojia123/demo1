@@ -72,4 +72,12 @@ public class Blog implements Serializable {
         this.id = blogId;
         this.likeCount = likeCount;
     }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

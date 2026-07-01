@@ -1,10 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.model.pojo.Blog;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Map;
@@ -49,4 +46,6 @@ public interface BolgMapper {
   void updateLikeCount(Integer id, int count);
 
   List<Blog> findHomeBlog(int start, int showCount);
+
+    void updateBlogViews(@Param("list") List<Blog> totaldata);
 }

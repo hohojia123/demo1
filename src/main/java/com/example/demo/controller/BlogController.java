@@ -11,6 +11,7 @@ import com.example.demo.service.BlogService;
 import com.example.demo.uitl.FormatUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +30,13 @@ public class BlogController {
 
     private static final String IMAGE_PNG = ".png";
 
+    @Autowired
+    private KafkaTemplate<String,String> kafkaTemplate;
+
+    @GetMapping("/test")
+    public void test(){
+        kafkaTemplate.send("order-topic","test","hello");
+    }
     @RequireRole("USER")
     @PostMapping("/uploadImg")
     public Result uploadImg(MultipartFile file){
@@ -67,8 +75,10 @@ public  Result newBlog(String blogTitle, String blogBody, Integer[] tagIds){
         try {
             return Result.success( "查询成功", blogService.findBlogById(blogId, isHistory));
         } catch (RuntimeException e) {
+            System.out.println("=== 博客不存在异常: " + e.getMessage());
             return Result.error(StatusCode.NOTFOUND, "此博客不存在");
         } catch (IOException e) {
+            System.out.println("=== IO异常: " + e.getMessage());
             return Result.error(StatusCode.ERROR, "此博客不存在");
         }
     }

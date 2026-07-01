@@ -60,6 +60,20 @@
         UPDATE blog SET like_count = IF(#{count} &lt; 0, 0, #{count})
         WHERE blog_id = #{blogId}
     </update>
+    <update id="updateBlogViews">
+        UPDATE blog
+        SET blog_blogViews = blog_blogViews +
+        CASE blog_id
+        <foreach collection="list" item="item">
+            WHEN #{item.id} THEN #{item.blogViews}
+        </foreach>
+        ELSE 0
+        END
+        WHERE blog_id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
     <select id="findBlogCountByTagId" parameterType="Integer" resultType="java.lang.Integer">
         SELECT COUNT(1) from blog_tag bt LEFT JOIN blog b on bt.blog_id = b.blog_id
         WHERE tag_id = #{value} AND b.blog_state = 1
