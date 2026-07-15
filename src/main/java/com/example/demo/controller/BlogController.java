@@ -9,6 +9,7 @@ import com.example.demo.model.entity.StatusCode;
 import com.example.demo.model.pojo.Blog;
 import com.example.demo.service.BlogService;
 import com.example.demo.uitl.FormatUtil;
+import com.example.demo.uitl.KafkaUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/blog")
@@ -33,9 +35,12 @@ public class BlogController {
     @Autowired
     private KafkaTemplate<String,String> kafkaTemplate;
 
+    @Autowired
+    private KafkaUtil kafkaUtil;
+
     @GetMapping("/test")
-    public void test(){
-        kafkaTemplate.send("order-topic","test","hello");
+    public void test() throws ExecutionException, InterruptedException {
+       kafkaUtil.createTopic("test-topic", 1, (short) 1,1,null);
     }
     @RequireRole("USER")
     @PostMapping("/uploadImg")
