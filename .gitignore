@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Sensitive config files ###
+.claude/
+application-dev.yml
+application.yml
+SPRING_DATASOURCE_PASSWORD
+--network
+docker-compose.yml
