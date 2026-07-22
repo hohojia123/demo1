@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.RagMapper" >
+    <resultMap id="DocMap" type="com.example.demo.model.pojo.KnowledgeDoc">
+        <id column="doc_id" property="docId"/>
+        <result column="blog_id" property="blogId"/>
+        <result column="title" property="title"/>
+        <result column="status" property="status"/>
+        <result column="chunk_count" property="chunkCount"/>
+        <result column="create_at" property="createAt"/>
+        <result column="update_at" property="updateAt"/>
+    </resultMap>
+    <resultMap id="CHunkMap" type="com.example.demo.model.pojo.KnowledgeChunk">
+        <id column="chunk_id" property="chunkId"/>
+        <result column="doc_id" property="docId"/>
+        <result column="content" property="content"/>
+        <result column="chunk_index" property="chunkIndex"/>
+        <result column="embedding" property="embedding"/>
+        <result column="create_at" property="createAt"/>
+    </resultMap>
+    <insert id="insertDoc">
+        insert into knowledge_doc(doc_id,blog_id,title,status,chunk_count,create_at,update_at)
+        values(#{docId},#{blogId},#{title},#{status},#{chunkCount},#{createAt},#{updateAt})
+    </insert>
+    <insert id="insertChunk">
+        insert into knowledge_chunk(chunk_id,doc_id,content,chunk_index,embedding,create_at)
+        values(#{chunkId},#{docId},#{content},#{chunkIndex},#{embedding},#{createAt})
+    </insert>
+    <insert id="insertChunkBatch">
+        <foreach collection="chunks" item="item" separator=";">
+            insert into knowledge_chunk(chunk_id,doc_id,content,chunk_index,embedding,create_at)
+            values(#{item.chunkId},#{item.docId},#{item.content},#{item.chunkIndex},#{item.embedding},#{item.createAt})
+        </foreach>
+    </insert>
+    <update id="updateDocStatus">
+        update knowledge_doc set status=#{status}, chunk_count=#{chunkCount},update_at=#{updateAt}
+        where doc_id=#{docId}
+    </update>
+    <delete id="deleteDoc">
+        delete from knowledge_doc where doc_id= #{docId}
+    </delete>
+    <delete id="deleteChunksByDocId">
+        delete from knowledge_chunk where doc_id= #{docId}
+    </delete>
+    <select id="findDocByBlogId" resultMap="DocMap">
+        select * from knowledge_doc where blog_id=#{blogId}
+    </select>
+    <select id="findAllodcs" resultMap="DocMap">
+        select * from knowledge_doc order by create_at desc
+    </select>
+    <select id="findAllChunks" resultMap="CHunkMap">
+        select * from knowledge_chunk order by create_at desc
+    </select>
+    <select id="findChunksByDocId" resultMap="CHunkMap">
+        select * from knowledge_chunk where doc_id=#{docId}
+    </select>
+    <select id="searchByFulltext" resultMap="CHunkMap">
+        select *,match(content) against(#{query}) as relevance
+        from knowledge_chunk
+        where match(content) against(#{query})
+        order by relevance desc
+        limit #{limit}
+    </select>
+    <select id="findRecentChunks" resultMap="CHunkMap">
+        SELECT * FROM knowledge_chunk
+        ORDER BY create_at DESC
+        LIMIT #{limit}
+    </select>
+    <delete id="deleteAllDocs">
+        delete from knowledge_doc
+    </delete>
+    <delete id="deleteAllChunks">
+        delete from knowledge_chunk
+    </delete>
+
+</mapper>

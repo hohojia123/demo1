@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.SessionMapper">
+    <resultMap id="SessionMap" type="com.example.demo.model.pojo.Session">
+        <id column="id" property="conversationId"/>
+        <result column="user_id" property="userId"/>
+        <result column="title" property="title"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+    <insert id="insertSession">
+        insert into ai_session(id,user_id,title,status,created_at,updated_at)
+        values(#{conversationId},#{userId},#{title},#{status},#{createdAt},#{updatedAt})
+    </insert>
+    <update id="updateSession">
+        update ai_session set title=#{title},status=#{status},updated_at=#{updatedAt}
+        where id=#{conversationId}
+    </update>
+    <delete id="deleteSession">
+        delete from ai_session where id=#{id}
+    </delete>
+    <select id="findSessionById" resultMap="SessionMap">
+         select * from ai_session where id=#{id}
+    </select>
+    <select id="findSessionByUserId" resultType="com.example.demo.model.pojo.Session">
+         select * from ai_session where user_id=#{userId}
+    </select>
+</mapper>

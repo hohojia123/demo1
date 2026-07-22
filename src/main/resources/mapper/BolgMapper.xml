@@ -118,6 +118,12 @@
         FROM blog b LEFT JOIN user u on b.user_id = u.user_id
         ORDER BY blog_state DESC,blog_time DESC
     </select>
+    <select id="findAllActiveBlogForRag" resultMap="Blog">
+        SELECT blog_id,blog_title,blog_body,blog_discussCount,blog_blogViews,blog_time,blog_state,b.user_id,u.user_name,u.user_avatar
+        FROM blog b LEFT JOIN user u on b.user_id = u.user_id
+        WHERE b.blog_state = 1
+        ORDER BY blog_time DESC
+    </select>
     <select id="getSearchAllBlogCount" parameterType="String" resultType="java.lang.Long">
          select count(1) from blog where blog_title like concat('%',#{value},'%')
     </select>

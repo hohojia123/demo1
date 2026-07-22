@@ -35,6 +35,8 @@ public interface BolgMapper {
 
   List<Blog> findAllBlog();
 
+  List<Blog> findAllActiveBlogForRag();
+
   Long getSearchAllBlogCount(String searchText);
 
   List<Blog> searchAllBlog(String searchText);

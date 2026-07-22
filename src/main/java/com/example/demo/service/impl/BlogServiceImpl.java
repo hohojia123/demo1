@@ -10,6 +10,7 @@ import com.example.demo.model.pojo.Blog;
 import com.example.demo.model.pojo.Tag;
 import com.example.demo.model.pojo.User;
 import com.example.demo.service.BlogService;
+import com.example.demo.service.impl.RagService;
 import com.example.demo.task.BolgTask;
 import com.example.demo.uitl.CacheUtil;
 import com.example.demo.uitl.DateUtil;
@@ -63,6 +64,9 @@ public class BlogServiceImpl implements BlogService {
  private KafkaTemplate<String,Blog>kafkaTemplate;
  @Autowired
  private CacheUtil cacheUtil;
+
+ @Autowired
+ private RagService ragService;
 
  private static  final DefaultRedisScript<Long>HOT_BLOG_LUA;
  static {
@@ -204,6 +208,7 @@ public class BlogServiceImpl implements BlogService {
                blog.setTags(tagMapper.findTagByUserId(user.getId()));
                redisTemplate.opsForValue().set(RedisConfig.REDIS_BLOG_PREFIX + blogId, objectMapper.writeValueAsString(blog));
            }
+           ragService.updateBlogKnowledge(blogId.longValue(), blogTitle, blogBody);
     }
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -220,7 +225,7 @@ public class BlogServiceImpl implements BlogService {
               redisTemplate.delete(RedisConfig.REDIS_BLOG_PREFIX + blogId);
           }
           redisTemplate.delete(RedisConfig.REDIS_STATISTICAL);
-
+          ragService.deleteBlogKnowledge(blogId.longValue());
     }
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -238,6 +243,7 @@ public class BlogServiceImpl implements BlogService {
         }
         redisTemplate.delete(RedisConfig.REDIS_STATISTICAL);
         redisTemplate.delete(RedisConfig.REDIS_BLOG_PREFIX + blogId);
+        ragService.deleteBlogKnowledge(blogId.longValue());
     }
 
     public Long getSearchAllBlogCount(String searchText) {
